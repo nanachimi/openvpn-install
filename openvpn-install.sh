@@ -242,7 +242,8 @@ else
 	cd /etc/openvpn/easy-rsa/
 	# Create the PKI, set up the CA, the DH params and the server + client certificates
 	./easyrsa init-pki
-	./easyrsa --batch build-ca nopass
+	#./easyrsa --batch build-ca nopass
+	./easyrsa build-ca nopass
 	./easyrsa gen-dh
 	./easyrsa build-server-full server nopass
 	./easyrsa build-client-full $CLIENT nopass
@@ -268,7 +269,7 @@ tls-auth ta.key 0
 topology subnet
 server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt" > /etc/openvpn/server.conf
-	echo 'push "redirect-gateway def1 bypass-dhcp"' >> /etc/openvpn/server.conf
+	echo '#push "redirect-gateway def1 bypass-dhcp"' >> /etc/openvpn/server.conf
 	# DNS
 	case $DNS in
 		1) 
@@ -312,6 +313,7 @@ group $GROUPNAME
 persist-key
 persist-tun
 status openvpn-status.log
+log openvpn.log
 verb 3
 crl-verify crl.pem" >> /etc/openvpn/server.conf
 	# Enable net.ipv4.ip_forward for the system
@@ -412,7 +414,6 @@ remote-cert-tls server
 auth SHA512
 cipher AES-256-CBC
 comp-lzo
-setenv opt block-outside-dns
 key-direction 1
 verb 3" > /etc/openvpn/client-common.txt
 	# Generates the custom client.ovpn
